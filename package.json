@@ -1,24 +1,17 @@
 {
-  "name": "chat_quiz_website",
+  "name": "react-chat",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@leecheuk/react-google-login": "^5.4.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "antd": "^5.5.2",
-    "firebase": "^9.22.1",
-    "gapi-script": "^1.2.0",
-    "google-sign-in": "^3.0.4",
-    "keymirror": "^0.1.1",
+    "firebase": "^9.22.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-redux": "^8.0.7",
-    "react-router-dom": "^6.11.2",
+    "react-firebase-hooks": "^5.1.1",
+    "react-router-dom": "^6.12.1",
     "react-scripts": "5.0.1",
-    "redux-saga": "^1.2.3",
-    "reselect": "^4.1.8",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

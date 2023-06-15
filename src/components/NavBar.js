@@ -8,12 +8,16 @@ const NavBar = () => {
 
   const [user] = useAuthState(auth);
 
+  // console.log(user);
+
   const googleSignIn = () => {
     const provider = new GoogleAuthProvider();
     signInWithRedirect(auth, provider);
+    // history('/')
   };
   const signOut = () => {
     auth.signOut();
+    // history('./login')
   };
 
   return (

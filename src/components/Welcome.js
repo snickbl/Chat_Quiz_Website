@@ -2,13 +2,18 @@ import React from "react";
 import GoogleSignin from "../img/btn_google_signin_dark_pressed_web.png";
 import { auth } from "../firebase";
 import { GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 const Welcome = () => {
 
-  const googleSignIn = () => {
+  const history = useNavigate()
+
+  const googleSignIn = async () => {
+    
     const provider = new GoogleAuthProvider();
-    signInWithRedirect(auth, provider);
-};
+    await signInWithRedirect(auth, provider).then(res=>console.log(res));
+    history('/')
+  };
 
   return (
     <main className="welcome">

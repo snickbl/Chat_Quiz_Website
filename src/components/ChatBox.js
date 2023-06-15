@@ -9,22 +9,22 @@ import {
 import { auth, db } from "../firebase";
 import Message from "./Message";
 import SendMessage from "./SendMessage";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
+import { useAuthState } from "react-firebase-hooks/auth";
+import ReadyForQuiz from './ReadyForQuiz'
 
 const ChatBox = () => {
-
   const [user] = useAuthState(auth);
+  const history = useNavigate();
 
-  const history = useNavigate()
+  if (!user) {
+    history("/login");
+  } else {
+  }
 
   const scroll = useRef();
   const [messages, setMessages] = useState([]);
 
-  if(user){}else{
-    history('/login')
-  }
-  
   useEffect(() => {
     const q = query(
       collection(db, "messages"),
@@ -43,13 +43,23 @@ const ChatBox = () => {
 
   return (
     <main className="chat-box">
-      <div className="messages-wrapper">
-        {messages?.map((message) => (
-          <Message key={message.id} message={message} />
-        ))}
+      <div className="quiz">
+        <ReadyForQuiz/>
       </div>
-      <span ref={scroll}></span>
-      <SendMessage scroll={scroll} />
+      <div className="messanger">
+        <div className="messages">
+          <div className="messages-wrapper">
+            {messages?.map((message) => (
+              <Message key={message.id} message={message} />
+            ))}
+          </div>
+        </div>
+
+        <span ref={scroll}></span>
+        <SendMessage scroll={scroll} />
+      </div>
+
+      {/* <button style={{height:'50px', width:'50px'}} onClick={handleButtonClick}>slovo</button> */}
     </main>
   );
 };

@@ -14,6 +14,7 @@ function App() {
   useEffect(()=>{
     // (user !== null) ? history('/') : console.log('net');
     user && history('/')
+    
   },[user])
 
   return (

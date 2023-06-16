@@ -1,56 +1,93 @@
 import { Button, Space } from 'antd';
-import React, { useState } from 'react';
-import { doc, getFirestore, setDoc } from 'firebase/firestore';
+import React, { useEffect, useState } from 'react';
+import { collection, doc, getDocs, getFirestore, setDoc } from 'firebase/firestore';
+import { getAuth } from "firebase/auth";
+import Quiz from './Quiz';
 
 const ReadyForQuiz = () => {
   const [startDisabled, setStartDisabled] = useState(false);
   const [cancelDisabled, setCancelDisabled] = useState(true);
-  const [key, setKey] = useState(false)
+  const [key, setKey] = useState(false);
+  const firestore = getFirestore();
+  const userID = getAuth()?.currentUser?.uid;
+  const [showQuiz, setShowQuiz] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeUnload = async (event) => {
+      try {
+        const userRef = doc(firestore, 'users', userID);
+        await setDoc(userRef, {
+          userReadiness: false,
+        });
+
+        console.log('Выход');
+      } catch (error) {
+        console.error('Ошибка при обновлении пользовательских данных:', error);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [firestore, userID]);
+
+  // const checkUserReadiness = async () => {
+  //   const usersRef = collection(firestore, 'users');
+  //   const readinessQuery = where('userReadiness', '==', true);
+
+  //   try {
+  //     const snapshot = await getDocs(usersRef, readinessQuery);
+  //     const allReady = snapshot.size > 0 && snapshot.size === snapshot.docs.length;
+
+  //     if (allReady) {
+  //       console.log('kefteme');
+  //     }
+  //   } catch (error) {
+  //     console.error('Ошибка при проверке готовности пользователей:', error);
+  //   }
+  // };
+
+  const checkUserReadiness = async () => {
+    const usersRef = collection(firestore, 'users');
+    const snapshot = await getDocs(usersRef);
+    const allReady = snapshot.docs.every((doc) => doc.data().userReadiness === true);
+  
+    if (allReady) {
+      setShowQuiz(true); // Установите состояние showQuiz в true
+    }
+  
+    setTimeout(checkUserReadiness, 1000);
+  };
 
   const handleStart = async () => {
-    // Обновление поля userReadiness в объекте аутентификации пользователя
-    const firestore = getFirestore();
-    // const auth = getAuth();
-    // const user = auth.currentUser;
-
-    sessionStorage.setItem('userReadiness', !key)
-
-    try {
-      // Обновляем профиль пользователя в Firebase Authentication
-      // await updateProfile(auth.currentUser, {
-      //   displayName: displayName,
-      // });
+    sessionStorage.setItem('userReadiness', !key.toString());
   
-      // Добавляем дополнительные данные в Firestore
-      const userRef = doc(firestore, 'users', 'bjNbinTFMmUEp28W8YycB3c9Wr02');
+    try {
+      const userRef = doc(firestore, 'users', userID);
       await setDoc(userRef, {
         userReadiness: !key,
       });
-      setKey(!key)
+      setKey(!key);
   
       console.log('Пользовательские данные успешно обновлены');
     } catch (error) {
       console.error('Ошибка при обновлении пользовательских данных:', error);
     }
-
-    // updateProfile(user, {
-    //   userReadiness: true,
-    // })
-    //   .then(() => {
-    //     console.log('Поле userReadiness успешно обновлено');
-    //   })
-    //   .catch((error) => {
-    //     console.error('Ошибка при обновлении поля userReadiness:', error);
-    //   });
-
+  
     setStartDisabled(!startDisabled);
     setCancelDisabled(!cancelDisabled);
+  
+    // Проверка готовности пользователей после обновления значения userReadiness
+    checkUserReadiness();
   };
 
   return (
     <div className='quiz_start'>
       {startDisabled ? null : <div className='start'>START if you are ready to start Quiz</div>}
-      <div>
+      {!showQuiz && (
+        <div>
         <Space className="site-button-ghost-wrapper">
           <Button ghost className={startDisabled ? 'start_able' : 'start_disable'} onClick={handleStart} disabled={startDisabled}>
             Start
@@ -60,6 +97,8 @@ const ReadyForQuiz = () => {
           </Button>
         </Space>
       </div>
+      )}
+      {showQuiz && <Quiz />} {/* Отображение компонента Quiz, если showQuiz равно true */}
     </div>
   );
 };

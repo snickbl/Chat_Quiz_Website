@@ -19,8 +19,6 @@ const ReadyForQuiz = () => {
         await setDoc(userRef, {
           userReadiness: false,
         });
-
-        console.log('Выход');
       } catch (error) {
         console.error('Ошибка при обновлении пользовательских данных:', error);
       }
@@ -85,7 +83,7 @@ const ReadyForQuiz = () => {
 
   return (
     <div className='quiz_start'>
-      {startDisabled ? null : <div className='start'>START if you are ready to start Quiz</div>}
+      {startDisabled ? (!showQuiz ? <div className='start'>PLEASE WAIT FOR THE OTHER STUDENTS...</div> : null) : <div className='start'>START if you are ready to start Quiz</div>}
       {!showQuiz && (
         <div>
         <Space className="site-button-ghost-wrapper">

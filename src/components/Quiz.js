@@ -149,7 +149,7 @@ export default function Quiz() {
 							<ul>
 								{userData.map((result, index) => (
 									<li key={index}>
-										<p>User: {result.name}</p>
+										<p>{result.name}</p>
 										<p>Result: {result.result}</p>
 									</li>
 								))}
